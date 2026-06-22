@@ -21,7 +21,12 @@ impl App {
         let q = self.query.to_lowercase();
         self.entries
             .iter()
-            .filter(|e| self.filter.map_or(true, |c| e.category == c))
+            // No filter = the "all" view, which excludes hidden categories
+            // (e.g. errno). An explicit filter shows that category regardless.
+            .filter(|e| match self.filter {
+                Some(c) => e.category == c,
+                None => e.category.default_visible(),
+            })
             .filter(|e| {
                 q.is_empty()
                     || e.code.to_lowercase().contains(&q)
@@ -31,11 +36,6 @@ impl App {
                     || e.category.key().contains(q.as_str())
             })
             .collect()
-    }
-
-    pub fn set_category(&mut self, c: Option<Category>) {
-        self.filter = c;
-        self.selected = 0;
     }
 
     pub fn apply_char(&mut self, c: char) {
@@ -59,18 +59,9 @@ impl App {
     }
 
     pub fn cycle_category(&mut self, forward: bool) {
-        let order = [
-            None,
-            Some(Category::Http),
-            Some(Category::Exit),
-            Some(Category::Curl),
-            Some(Category::Git),
-            Some(Category::Errno),
-            Some(Category::Ble),
-            Some(Category::Rust),
-            Some(Category::Docker),
-            Some(Category::Podman),
-        ];
+        // "all" (None) followed by the visible categories, in canonical order.
+        let mut order: Vec<Option<Category>> = vec![None];
+        order.extend(Category::visible().into_iter().map(Some));
         let idx = order.iter().position(|c| *c == self.filter).unwrap_or(0);
         let n = order.len() as isize;
         let next = if forward {
@@ -152,22 +143,36 @@ mod tests {
     #[test]
     fn cycle_category_walks_all_then_wraps() {
         let mut a = app();
+        // Visible categories in canonical order, then wrap to None. errno is
+        // hidden, so it is not in the cycle.
         let seq = [
             Some(Category::Http),
             Some(Category::Exit),
             Some(Category::Curl),
             Some(Category::Git),
-            Some(Category::Errno),
-            Some(Category::Ble),
             Some(Category::Rust),
             Some(Category::Docker),
             Some(Category::Podman),
+            Some(Category::Ble),
+            Some(Category::LeAudio),
             None,
         ];
         for expected in seq {
             a.cycle_category(true);
             assert_eq!(a.filter, expected);
         }
+        assert!(!seq.contains(&Some(Category::Errno)));
+    }
+
+    #[test]
+    fn errno_is_hidden_from_all_but_reachable() {
+        let mut a = app();
+        // "all" view excludes errno.
+        assert!(a.filtered().iter().all(|e| e.category != Category::Errno));
+        // Explicit filter shows it.
+        a.filter = Some(Category::Errno);
+        assert!(a.filtered().iter().all(|e| e.category == Category::Errno));
+        assert!(!a.filtered().is_empty());
     }
 
     #[test]
@@ -179,15 +184,6 @@ mod tests {
         let hits = a.filtered();
         assert!(!hits.is_empty());
         assert!(hits.iter().any(|e| e.category == Category::Git));
-    }
-
-    #[test]
-    fn set_category_changes_filter_and_resets_selection() {
-        let mut a = app();
-        a.selected = 5;
-        a.set_category(Some(Category::Curl));
-        assert_eq!(a.filter, Some(Category::Curl));
-        assert_eq!(a.selected, 0);
     }
 
     #[test]

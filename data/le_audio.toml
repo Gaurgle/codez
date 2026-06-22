@@ -1,0 +1,157 @@
+# Bluetooth LE Audio - ASCS ASE Control Point response codes and reason codes
+# (BAP / ASCS spec). Response codes say what failed; reason codes say which
+# parameter. Reason entries are suffixed to disambiguate the overlapping values.
+
+# --- ASE Control Point response codes ---
+
+[[entry]]
+code = "0x00"
+name = "Success"
+group = "ASCS"
+summary = "Control operation succeeded"
+
+[[entry]]
+code = "0x01"
+name = "Unsupported Opcode"
+group = "ASCS"
+summary = "The control point opcode is not supported"
+
+[[entry]]
+code = "0x02"
+name = "Invalid Length"
+group = "ASCS"
+summary = "The control point PDU length is wrong"
+
+[[entry]]
+code = "0x03"
+name = "Invalid ASE ID"
+group = "ASCS"
+summary = "No ASE with the given ID"
+
+[[entry]]
+code = "0x04"
+name = "Invalid ASE State Transition"
+group = "ASCS"
+summary = "Operation not allowed in the ASE's current state"
+
+[[entry]]
+code = "0x05"
+name = "Invalid ASE Direction"
+group = "ASCS"
+summary = "Operation not allowed for this ASE direction"
+
+[[entry]]
+code = "0x06"
+name = "Unsupported Audio Capabilities"
+group = "ASCS"
+summary = "Requested capabilities are not supported"
+
+[[entry]]
+code = "0x07"
+name = "Unsupported Configuration Parameter"
+group = "ASCS"
+summary = "A configuration parameter is not supported"
+
+[[entry]]
+code = "0x08"
+name = "Rejected Configuration Parameter"
+group = "ASCS"
+summary = "A configuration parameter value was rejected"
+
+[[entry]]
+code = "0x09"
+name = "Invalid Configuration Parameter"
+group = "ASCS"
+summary = "A configuration parameter value is invalid"
+
+[[entry]]
+code = "0x0A"
+name = "Unsupported Metadata"
+group = "ASCS"
+summary = "A metadata type is not supported"
+
+[[entry]]
+code = "0x0B"
+name = "Rejected Metadata"
+group = "ASCS"
+summary = "A metadata value was rejected"
+
+[[entry]]
+code = "0x0C"
+name = "Invalid Metadata"
+group = "ASCS"
+summary = "A metadata value is invalid"
+
+[[entry]]
+code = "0x0D"
+name = "Insufficient Resources"
+group = "ASCS"
+summary = "Not enough resources for the operation"
+
+[[entry]]
+code = "0x0E"
+name = "Unspecified Error"
+group = "ASCS"
+summary = "Operation failed, no specific reason"
+
+# --- Reason codes (which parameter the response refers to) ---
+
+[[entry]]
+code = "0x01 (reason)"
+name = "Codec ID"
+group = "Reason"
+summary = "Problem is with the Codec ID"
+
+[[entry]]
+code = "0x02 (reason)"
+name = "Codec Specific Configuration"
+group = "Reason"
+summary = "Problem is with codec-specific config"
+
+[[entry]]
+code = "0x03 (reason)"
+name = "SDU Interval"
+group = "Reason"
+summary = "Problem is with the SDU interval"
+
+[[entry]]
+code = "0x04 (reason)"
+name = "Framing"
+group = "Reason"
+summary = "Problem is with the framing"
+
+[[entry]]
+code = "0x05 (reason)"
+name = "PHY"
+group = "Reason"
+summary = "Problem is with the PHY"
+
+[[entry]]
+code = "0x06 (reason)"
+name = "Maximum SDU Size"
+group = "Reason"
+summary = "Problem is with the maximum SDU size"
+
+[[entry]]
+code = "0x07 (reason)"
+name = "Retransmission Number"
+group = "Reason"
+summary = "Problem is with the retransmission number"
+
+[[entry]]
+code = "0x08 (reason)"
+name = "Max Transport Latency"
+group = "Reason"
+summary = "Problem is with the max transport latency"
+
+[[entry]]
+code = "0x09 (reason)"
+name = "Presentation Delay"
+group = "Reason"
+summary = "Problem is with the presentation delay"
+
+[[entry]]
+code = "0x0A (reason)"
+name = "Invalid ASE CIS Mapping"
+group = "Reason"
+summary = "The ASE-to-CIS mapping is invalid"

@@ -39,17 +39,6 @@ fn event_loop(terminal: &mut Terminal<CrosstermBackend<Stdout>>, app: &mut App) 
 
         match (k.code, k.modifiers) {
             (KeyCode::Char('c'), KeyModifiers::CONTROL) => break,
-            // Option/Alt + number jumps straight to a category (0 = all).
-            (KeyCode::Char('1'), KeyModifiers::ALT) => app.set_category(Some(Category::Http)),
-            (KeyCode::Char('2'), KeyModifiers::ALT) => app.set_category(Some(Category::Exit)),
-            (KeyCode::Char('3'), KeyModifiers::ALT) => app.set_category(Some(Category::Curl)),
-            (KeyCode::Char('4'), KeyModifiers::ALT) => app.set_category(Some(Category::Git)),
-            (KeyCode::Char('5'), KeyModifiers::ALT) => app.set_category(Some(Category::Errno)),
-            (KeyCode::Char('6'), KeyModifiers::ALT) => app.set_category(Some(Category::Ble)),
-            (KeyCode::Char('7'), KeyModifiers::ALT) => app.set_category(Some(Category::Rust)),
-            (KeyCode::Char('8'), KeyModifiers::ALT) => app.set_category(Some(Category::Docker)),
-            (KeyCode::Char('9'), KeyModifiers::ALT) => app.set_category(Some(Category::Podman)),
-            (KeyCode::Char('0'), KeyModifiers::ALT) => app.set_category(None),
             (KeyCode::Esc, _) => {
                 if app.query.is_empty() {
                     break;
@@ -91,22 +80,20 @@ fn fit(s: &str, w: usize) -> String {
 }
 
 /// Category filter tags for the header; the active one is highlighted.
+/// "all" plus the visible categories, in canonical order. A hidden category
+/// (e.g. errno) only appears when it is the active filter.
 fn category_tag_spans(app: &App) -> Vec<Span<'static>> {
-    let tags = [
-        (None, "all"),
-        (Some(Category::Http), "http"),
-        (Some(Category::Exit), "exit"),
-        (Some(Category::Curl), "curl"),
-        (Some(Category::Git), "git"),
-        (Some(Category::Errno), "errno"),
-        (Some(Category::Ble), "ble"),
-        (Some(Category::Rust), "rust"),
-        (Some(Category::Docker), "docker"),
-        (Some(Category::Podman), "podman"),
-    ];
-    tags.iter()
-        .map(|(cat, name)| {
-            let style = if *cat == app.filter {
+    let mut tags: Vec<Option<Category>> = vec![None];
+    tags.extend(Category::visible().into_iter().map(Some));
+    if let Some(c) = app.filter {
+        if !tags.contains(&Some(c)) {
+            tags.push(Some(c));
+        }
+    }
+    tags.into_iter()
+        .map(|cat| {
+            let name = cat.map(|c| c.key()).unwrap_or("all");
+            let style = if cat == app.filter {
                 Style::default().fg(theme::MAUVE).bold()
             } else {
                 Style::default().fg(theme::OVERLAY)
@@ -145,43 +132,49 @@ fn draw(frame: &mut Frame, app: &App) {
     // List of filtered entries. Column widths size to the visible content
     // (codes range from 3-digit HTTP to long git slugs), capped and ellipsized.
     let hits = app.filtered();
-    // Column widths are computed over the full dataset, not the filtered view,
-    // so spacing is identical in every category and in "all". A leading category
-    // tag shows where each row belongs (essential in "all"). git slugs ellipsize
-    // in the list; the detail pane always shows the code in full.
-    let code_w = app
-        .entries
+    // The category tag is shown only in "all" mode (where you can't otherwise
+    // tell where a code belongs). In a single-category view it is redundant, so
+    // it is dropped, which frees width for the code column to show git slugs in
+    // full. Widths are sized to the current view.
+    let show_tag = app.filter.is_none();
+    let code_w = hits
         .iter()
         .map(|e| e.code.chars().count())
         .max()
         .unwrap_or(3)
-        .clamp(3, 12);
-    let name_w = app
-        .entries
+        .clamp(3, 20);
+    let name_w = hits
         .iter()
         .map(|e| e.name.chars().count())
         .max()
         .unwrap_or(8)
-        .clamp(8, 26);
+        .clamp(8, 30);
     let items: Vec<ListItem> = hits
         .iter()
         .map(|e| {
-            let key = e.category.key();
-            ListItem::new(Line::from(vec![
-                Span::styled(
-                    format!("{key:<6}"),
+            let mut spans = Vec::new();
+            if show_tag {
+                let key = e.category.key();
+                spans.push(Span::styled(
+                    format!("{key:<8}"),
                     Style::default().fg(theme::category_color(key)),
-                ),
-                Span::raw(" "),
-                Span::styled(
-                    fit(&e.code, code_w),
-                    Style::default().fg(theme::group_color(&e.group)),
-                ),
-                Span::raw("  "),
-                Span::styled(fit(&e.name, name_w), Style::default().fg(theme::SAPPHIRE)),
-                Span::raw("  "),
-                Span::styled(e.summary.clone(), Style::default().fg(theme::OVERLAY)),
-            ]))
+                ));
+            }
+            spans.push(Span::styled(
+                fit(&e.code, code_w),
+                Style::default().fg(theme::group_color(&e.group)),
+            ));
+            spans.push(Span::raw("  "));
+            spans.push(Span::styled(
+                fit(&e.name, name_w),
+                Style::default().fg(theme::SAPPHIRE),
+            ));
+            spans.push(Span::raw("  "));
+            spans.push(Span::styled(
+                e.summary.clone(),
+                Style::default().fg(theme::OVERLAY),
+            ));
+            ListItem::new(Line::from(spans))
         })
         .collect();
 
@@ -243,7 +236,7 @@ fn draw(frame: &mut Frame, app: &App) {
 
     // Footer key hints.
     let footer = Paragraph::new(Span::styled(
-        "  type to search   ↑↓ move   ←→ category   ⌥1-4 jump   esc clear/quit",
+        "  type to search   ↑↓ move   ←→ / Tab category   esc clear/quit",
         Style::default().fg(theme::OVERLAY),
     ));
     frame.render_widget(footer, chunks[3]);

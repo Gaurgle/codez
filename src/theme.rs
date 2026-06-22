@@ -33,6 +33,7 @@ pub fn category_color(key: &str) -> Color {
         "git" => MAUVE,
         "errno" => YELLOW,
         "ble" => BLUE,
+        "leaudio" => SAPPHIRE,
         "rust" => RED,
         "docker" => LAVENDER,
         "podman" => MAUVE,

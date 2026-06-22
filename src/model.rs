@@ -9,12 +9,29 @@ pub enum Category {
     Git,
     Errno,
     Ble,
+    LeAudio,
     Rust,
     Docker,
     Podman,
 }
 
 impl Category {
+    /// On-screen order. This is the single source of truth for the order in
+    /// which categories appear in the tabs, the cycle, and the list. Reorder
+    /// by editing this array.
+    pub const ORDER: [Category; 10] = [
+        Category::Http,
+        Category::Exit,
+        Category::Curl,
+        Category::Git,
+        Category::Rust,
+        Category::Docker,
+        Category::Podman,
+        Category::Ble,
+        Category::LeAudio,
+        Category::Errno,
+    ];
+
     pub fn key(self) -> &'static str {
         match self {
             Category::Http => "http",
@@ -23,10 +40,27 @@ impl Category {
             Category::Git => "git",
             Category::Errno => "errno",
             Category::Ble => "ble",
+            Category::LeAudio => "leaudio",
             Category::Rust => "rust",
             Category::Docker => "docker",
             Category::Podman => "podman",
         }
+    }
+
+    /// Rank in `ORDER`, used to sort entries for display.
+    pub fn order(self) -> usize {
+        Self::ORDER.iter().position(|c| *c == self).unwrap_or(usize::MAX)
+    }
+
+    /// Categories that are hidden from the default ("all") view, the tabs, and
+    /// the cycle. They remain reachable with their CLI flag (e.g. --errno).
+    pub fn default_visible(self) -> bool {
+        !matches!(self, Category::Errno)
+    }
+
+    /// Visible categories, in `ORDER`.
+    pub fn visible() -> Vec<Category> {
+        Self::ORDER.into_iter().filter(|c| c.default_visible()).collect()
     }
 }
 
@@ -73,8 +107,11 @@ pub fn load_all() -> Vec<Entry> {
     all.extend(parse(include_str!("../data/errno.toml"), Category::Errno, "errno.toml"));
     all.extend(parse(include_str!("../data/ble.toml"), Category::Ble, "ble.toml"));
     all.extend(parse(include_str!("../data/rust.toml"), Category::Rust, "rust.toml"));
+    all.extend(parse(include_str!("../data/le_audio.toml"), Category::LeAudio, "le_audio.toml"));
     all.extend(parse(include_str!("../data/docker.toml"), Category::Docker, "docker.toml"));
     all.extend(parse(include_str!("../data/podman.toml"), Category::Podman, "podman.toml"));
+    // Display in canonical category order, preserving within-file order.
+    all.sort_by_key(|e| e.category.order());
     all
 }
 
@@ -119,6 +156,7 @@ mod tests {
             Category::Git,
             Category::Errno,
             Category::Ble,
+            Category::LeAudio,
             Category::Rust,
             Category::Docker,
             Category::Podman,

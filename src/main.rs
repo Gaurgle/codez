@@ -29,6 +29,24 @@ struct Cli {
     /// Filter to git errors
     #[arg(long)]
     git: bool,
+    /// Filter to C/POSIX/Zephyr errno (hidden from the default view)
+    #[arg(long)]
+    errno: bool,
+    /// Filter to Bluetooth LE error codes
+    #[arg(long)]
+    ble: bool,
+    /// Filter to Bluetooth LE Audio codes
+    #[arg(long)]
+    leaudio: bool,
+    /// Filter to Rust compiler error codes
+    #[arg(long)]
+    rust: bool,
+    /// Filter to Docker exit codes
+    #[arg(long)]
+    docker: bool,
+    /// Filter to Podman exit codes
+    #[arg(long)]
+    podman: bool,
 
     /// Force plain (non-interactive) output
     #[arg(long)]
@@ -40,18 +58,23 @@ fn main() {
 
     let mut app = App::new(model::load_all());
 
-    // Category flags, by precedence (git > curl > exit > http) if several are passed.
-    app.filter = if cli.git {
-        Some(Category::Git)
-    } else if cli.curl {
-        Some(Category::Curl)
-    } else if cli.exit {
-        Some(Category::Exit)
-    } else if cli.http {
-        Some(Category::Http)
-    } else {
-        None
-    };
+    // Category flags. If several are passed, the first listed wins.
+    let flag_categories = [
+        (cli.http, Category::Http),
+        (cli.exit, Category::Exit),
+        (cli.curl, Category::Curl),
+        (cli.git, Category::Git),
+        (cli.errno, Category::Errno),
+        (cli.ble, Category::Ble),
+        (cli.leaudio, Category::LeAudio),
+        (cli.rust, Category::Rust),
+        (cli.docker, Category::Docker),
+        (cli.podman, Category::Podman),
+    ];
+    app.filter = flag_categories
+        .iter()
+        .find(|(on, _)| *on)
+        .map(|(_, c)| *c);
 
     if let Some(q) = cli.query.as_deref() {
         app.query = q.to_string();
