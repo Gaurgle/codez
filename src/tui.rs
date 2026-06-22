@@ -57,6 +57,19 @@ fn event_loop(terminal: &mut Terminal<CrosstermBackend<Stdout>>, app: &mut App) 
     Ok(())
 }
 
+/// Pad or truncate (with an ellipsis) a string to exactly `w` display columns.
+fn fit(s: &str, w: usize) -> String {
+    let len = s.chars().count();
+    if len <= w {
+        format!("{s:<w$}")
+    } else if w == 0 {
+        String::new()
+    } else {
+        let head: String = s.chars().take(w - 1).collect();
+        format!("{head}…")
+    }
+}
+
 fn category_tabs(app: &App) -> String {
     let active = app.filter.map(|c| c.key()).unwrap_or("all");
     let mut s = String::new();
@@ -99,17 +112,32 @@ fn draw(frame: &mut Frame, app: &App) {
     );
     frame.render_widget(header, chunks[0]);
 
-    // List of filtered entries.
+    // List of filtered entries. Column widths size to the visible content
+    // (codes range from 3-digit HTTP to long git slugs), capped and ellipsized.
     let hits = app.filtered();
+    let code_w = hits
+        .iter()
+        .map(|e| e.code.chars().count())
+        .max()
+        .unwrap_or(3)
+        .clamp(3, 18);
+    let name_w = hits
+        .iter()
+        .map(|e| e.name.chars().count())
+        .max()
+        .unwrap_or(8)
+        .clamp(8, 28);
     let items: Vec<ListItem> = hits
         .iter()
         .map(|e| {
             ListItem::new(Line::from(vec![
                 Span::styled(
-                    format!("{:<5}", e.code),
+                    fit(&e.code, code_w),
                     Style::default().fg(theme::group_color(&e.group)),
                 ),
-                Span::styled(format!("{:<22}", e.name), Style::default().fg(theme::SAPPHIRE)),
+                Span::raw("  "),
+                Span::styled(fit(&e.name, name_w), Style::default().fg(theme::SAPPHIRE)),
+                Span::raw("  "),
                 Span::styled(e.summary.clone(), Style::default().fg(theme::OVERLAY)),
             ]))
         })
@@ -185,6 +213,24 @@ mod tests {
     use crate::model::load_all;
     use ratatui::backend::TestBackend;
     use ratatui::Terminal;
+
+    #[test]
+    fn git_slugs_render_without_clipping_the_code() {
+        use crate::model::Category;
+        let mut app = App::new(load_all());
+        app.filter = Some(Category::Git);
+        let mut terminal = Terminal::new(TestBackend::new(90, 24)).unwrap();
+        terminal.draw(|f| draw(f, &app)).unwrap();
+        let text: String = terminal
+            .backend()
+            .buffer()
+            .content()
+            .iter()
+            .map(|c| c.symbol())
+            .collect();
+        assert!(text.contains("nothing-to-commit"));
+        assert!(text.contains("non-fast-forward"));
+    }
 
     #[test]
     fn draw_renders_header_and_a_row() {
