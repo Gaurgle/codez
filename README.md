@@ -1,8 +1,6 @@
 # codez
 
-Interactive terminal dictionary of status and error codes - HTTP, shell exit, curl, git, and more - with live search and a detail pane. A sibling to [clockz](https://github.com/Gaurgle/clockz), [noiz](https://github.com/Gaurgle/noiz), and [httpz](https://github.com/Gaurgle/httpz).
-
-> Status: in development. Design spec in [`docs/superpowers/specs`](docs/superpowers/specs).
+Interactive terminal dictionary of status and error codes - HTTP, shell exit, curl, git - with live search and a detail pane. A sibling to [clockz](https://github.com/Gaurgle/clockz), [noiz](https://github.com/Gaurgle/noiz), and [httpz](https://github.com/Gaurgle/httpz).
 
 ## What it does
 
@@ -13,9 +11,19 @@ codez 404        # quick lookup: print the match with detail, then exit
 codez --git rejected   # lookup within a category
 ```
 
-The rule: give it a query and it prints the answer and exits; give it none and it opens the interactive browser. Piping always prints plainly.
+The rule: give it a query and it prints the answer and exits; give it none and it opens the interactive browser. Piping always prints plainly. Force plain output anytime with `--plain`.
 
 Each entry carries a summary, a longer explanation, an optional fix hint, and a source reference.
+
+### TUI keys
+
+| Key | Action |
+|-----|--------|
+| type | filter live |
+| `↑` / `↓` | move selection |
+| `Tab` / `Shift-Tab` | cycle category (all/http/exit/curl/git) |
+| `Esc` | clear search, or quit when empty |
+| `Ctrl-C` | quit |
 
 ## Build
 
