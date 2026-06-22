@@ -28,8 +28,14 @@ impl App {
                     || e.name.to_lowercase().contains(&q)
                     || e.summary.to_lowercase().contains(&q)
                     || e.group.to_lowercase().contains(&q)
+                    || e.category.key().contains(q.as_str())
             })
             .collect()
+    }
+
+    pub fn set_category(&mut self, c: Option<Category>) {
+        self.filter = c;
+        self.selected = 0;
     }
 
     pub fn apply_char(&mut self, c: char) {
@@ -152,6 +158,26 @@ mod tests {
             a.cycle_category(true);
             assert_eq!(a.filter, expected);
         }
+    }
+
+    #[test]
+    fn category_name_acts_as_search_tag() {
+        let mut a = app();
+        for c in "git".chars() {
+            a.apply_char(c);
+        }
+        let hits = a.filtered();
+        assert!(!hits.is_empty());
+        assert!(hits.iter().any(|e| e.category == Category::Git));
+    }
+
+    #[test]
+    fn set_category_changes_filter_and_resets_selection() {
+        let mut a = app();
+        a.selected = 5;
+        a.set_category(Some(Category::Curl));
+        assert_eq!(a.filter, Some(Category::Curl));
+        assert_eq!(a.selected, 0);
     }
 
     #[test]

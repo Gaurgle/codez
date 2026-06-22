@@ -6,9 +6,11 @@ use crossterm::terminal::{
 };
 use crossterm::ExecutableCommand;
 use ratatui::prelude::*;
+use ratatui::style::Modifier;
 use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap};
 
 use crate::app::App;
+use crate::model::Category;
 use crate::theme;
 
 pub fn run(mut app: App) -> io::Result<()> {
@@ -38,6 +40,12 @@ fn event_loop(terminal: &mut Terminal<CrosstermBackend<Stdout>>, app: &mut App) 
 
         match (k.code, k.modifiers) {
             (KeyCode::Char('c'), KeyModifiers::CONTROL) => break,
+            // Option/Alt + number jumps straight to a category (0 = all).
+            (KeyCode::Char('1'), KeyModifiers::ALT) => app.set_category(Some(Category::Http)),
+            (KeyCode::Char('2'), KeyModifiers::ALT) => app.set_category(Some(Category::Exit)),
+            (KeyCode::Char('3'), KeyModifiers::ALT) => app.set_category(Some(Category::Curl)),
+            (KeyCode::Char('4'), KeyModifiers::ALT) => app.set_category(Some(Category::Git)),
+            (KeyCode::Char('0'), KeyModifiers::ALT) => app.set_category(None),
             (KeyCode::Esc, _) => {
                 if app.query.is_empty() {
                     break;
@@ -47,10 +55,18 @@ fn event_loop(terminal: &mut Terminal<CrosstermBackend<Stdout>>, app: &mut App) 
             }
             (KeyCode::Up, _) => app.move_selection(-1),
             (KeyCode::Down, _) => app.move_selection(1),
+            (KeyCode::Left, _) => app.cycle_category(false),
+            (KeyCode::Right, _) => app.cycle_category(true),
             (KeyCode::Tab, _) => app.cycle_category(true),
             (KeyCode::BackTab, _) => app.cycle_category(false),
             (KeyCode::Backspace, _) => app.backspace(),
-            (KeyCode::Char(c), m) if !m.contains(KeyModifiers::CONTROL) => app.apply_char(c),
+            // Everything else printable feeds the live search (Alt/Ctrl excluded
+            // so Option-combos and Ctrl shortcuts do not get typed).
+            (KeyCode::Char(c), m)
+                if !m.intersects(KeyModifiers::CONTROL | KeyModifiers::ALT) =>
+            {
+                app.apply_char(c)
+            }
             _ => {}
         }
     }
@@ -70,17 +86,25 @@ fn fit(s: &str, w: usize) -> String {
     }
 }
 
-fn category_tabs(app: &App) -> String {
-    let active = app.filter.map(|c| c.key()).unwrap_or("all");
-    let mut s = String::new();
-    for name in ["all", "http", "exit", "curl", "git"] {
-        if name == active {
-            s.push_str(&format!("[{name}] "));
-        } else {
-            s.push_str(&format!(" {name}  "));
-        }
-    }
-    s
+/// Category filter tags for the header; the active one is highlighted.
+fn category_tag_spans(app: &App) -> Vec<Span<'static>> {
+    let tags = [
+        (None, "all"),
+        (Some(Category::Http), "http"),
+        (Some(Category::Exit), "exit"),
+        (Some(Category::Curl), "curl"),
+        (Some(Category::Git), "git"),
+    ];
+    tags.iter()
+        .map(|(cat, name)| {
+            let style = if *cat == app.filter {
+                Style::default().fg(theme::MAUVE).bold()
+            } else {
+                Style::default().fg(theme::OVERLAY)
+            };
+            Span::styled(format!(" {name} "), style)
+        })
+        .collect()
 }
 
 fn draw(frame: &mut Frame, app: &App) {
@@ -105,22 +129,22 @@ fn draw(frame: &mut Frame, app: &App) {
         Block::default()
             .borders(Borders::ALL)
             .border_style(Style::default().fg(theme::SURFACE))
-            .title(Span::styled(
-                category_tabs(app),
-                Style::default().fg(theme::MAUVE),
-            )),
+            .title(Line::from(category_tag_spans(app))),
     );
     frame.render_widget(header, chunks[0]);
 
     // List of filtered entries. Column widths size to the visible content
     // (codes range from 3-digit HTTP to long git slugs), capped and ellipsized.
     let hits = app.filtered();
+    // In a single-category view, let the code column grow to fit git slugs.
+    // In the mixed "all" view (HTTP-dominant), keep it tight and ellipsize slugs.
+    let code_cap = if app.filter.is_some() { 18 } else { 8 };
     let code_w = hits
         .iter()
         .map(|e| e.code.chars().count())
         .max()
         .unwrap_or(3)
-        .clamp(3, 18);
+        .clamp(3, code_cap);
     let name_w = hits
         .iter()
         .map(|e| e.name.chars().count())
@@ -153,7 +177,7 @@ fn draw(frame: &mut Frame, app: &App) {
                 .borders(Borders::ALL)
                 .border_style(Style::default().fg(theme::SURFACE)),
         )
-        .highlight_style(Style::default().fg(theme::TEXT).bold())
+        .highlight_style(Style::default().add_modifier(Modifier::BOLD | Modifier::UNDERLINED))
         .highlight_symbol("▸ ");
     frame.render_stateful_widget(list, chunks[1], &mut state);
 
@@ -201,7 +225,7 @@ fn draw(frame: &mut Frame, app: &App) {
 
     // Footer key hints.
     let footer = Paragraph::new(Span::styled(
-        "  ↑↓ move   ⇥ category   type to search   esc clear/quit   ^C quit",
+        "  type to search   ↑↓ move   ←→ category   ⌥1-4 jump   esc clear/quit",
         Style::default().fg(theme::OVERLAY),
     ));
     frame.render_widget(footer, chunks[3]);
@@ -213,6 +237,20 @@ mod tests {
     use crate::model::load_all;
     use ratatui::backend::TestBackend;
     use ratatui::Terminal;
+
+    #[test]
+    fn selected_row_is_underlined() {
+        let app = App::new(load_all());
+        let mut terminal = Terminal::new(TestBackend::new(90, 24)).unwrap();
+        terminal.draw(|f| draw(f, &app)).unwrap();
+        let underlined = terminal
+            .backend()
+            .buffer()
+            .content()
+            .iter()
+            .any(|c| c.modifier.contains(Modifier::UNDERLINED));
+        assert!(underlined, "selected row should be underlined");
+    }
 
     #[test]
     fn git_slugs_render_without_clipping_the_code() {
