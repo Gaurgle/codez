@@ -1,0 +1,375 @@
+[[entry]]
+code = "200"
+name = "OK"
+group = "2xx Success"
+summary = "Request succeeded"
+
+[[entry]]
+code = "201"
+name = "Created"
+group = "2xx Success"
+summary = "New resource created"
+
+[[entry]]
+code = "202"
+name = "Accepted"
+group = "2xx Success"
+summary = "Request queued, not yet processed"
+
+[[entry]]
+code = "203"
+name = "Non-Authoritative Information"
+group = "2xx Success"
+summary = "Metadata from a transforming proxy"
+
+[[entry]]
+code = "204"
+name = "No Content"
+group = "2xx Success"
+summary = "Success, no body returned"
+
+[[entry]]
+code = "205"
+name = "Reset Content"
+group = "2xx Success"
+summary = "Reset the document view"
+
+[[entry]]
+code = "206"
+name = "Partial Content"
+group = "2xx Success"
+summary = "Range request succeeded"
+detail = "The server is delivering part of the resource in response to a Range header."
+ref = "RFC 9110 15.3.7"
+
+[[entry]]
+code = "207"
+name = "Multi-Status"
+group = "2xx Success"
+summary = "Per-resource statuses (WebDAV)"
+
+[[entry]]
+code = "208"
+name = "Already Reported"
+group = "2xx Success"
+summary = "Members already listed (WebDAV)"
+
+[[entry]]
+code = "226"
+name = "IM Used"
+group = "2xx Success"
+summary = "Result of instance manipulations"
+
+[[entry]]
+code = "300"
+name = "Multiple Choices"
+group = "3xx Redirect"
+summary = "Several responses to choose from"
+
+[[entry]]
+code = "301"
+name = "Moved Permanently"
+group = "3xx Redirect"
+summary = "Resource moved to a new URL"
+detail = "Future requests should use the new URL; clients and caches may rewrite it."
+fix = "Update bookmarks/links to the new location."
+ref = "RFC 9110 15.4.2"
+
+[[entry]]
+code = "302"
+name = "Found"
+group = "3xx Redirect"
+summary = "Temporary redirect"
+
+[[entry]]
+code = "303"
+name = "See Other"
+group = "3xx Redirect"
+summary = "Redirect, fetch result with GET"
+
+[[entry]]
+code = "304"
+name = "Not Modified"
+group = "3xx Redirect"
+summary = "Cached copy is still valid"
+
+[[entry]]
+code = "305"
+name = "Use Proxy"
+group = "3xx Redirect"
+summary = "Deprecated, must use a proxy"
+
+[[entry]]
+code = "307"
+name = "Temporary Redirect"
+group = "3xx Redirect"
+summary = "Repeat request to new URL, same method"
+
+[[entry]]
+code = "308"
+name = "Permanent Redirect"
+group = "3xx Redirect"
+summary = "Resource moved, same method"
+detail = "Like 301 but the method and body must not change on the redirected request."
+ref = "RFC 9110 15.4.9"
+
+[[entry]]
+code = "400"
+name = "Bad Request"
+group = "4xx Client"
+summary = "Malformed syntax or invalid input"
+
+[[entry]]
+code = "401"
+name = "Unauthorized"
+group = "4xx Client"
+summary = "Authentication required or failed"
+detail = "No or bad credentials. Despite the name, it is about authentication, not authorization."
+fix = "Send valid credentials (e.g. a token in Authorization)."
+ref = "RFC 9110 15.5.2"
+
+[[entry]]
+code = "402"
+name = "Payment Required"
+group = "4xx Client"
+summary = "Reserved, used by paid tiers"
+
+[[entry]]
+code = "403"
+name = "Forbidden"
+group = "4xx Client"
+summary = "Authenticated but not allowed"
+detail = "The server understood the request but refuses it. Auth will not help."
+fix = "Check permissions/ownership; do not retry with new credentials."
+ref = "RFC 9110 15.5.4"
+
+[[entry]]
+code = "404"
+name = "Not Found"
+group = "4xx Client"
+summary = "Resource missing"
+detail = "The server has no representation for this resource, or hides its existence."
+fix = "Check the URL/path; may be auth-masked (see 403)."
+ref = "RFC 9110 15.5.5"
+
+[[entry]]
+code = "405"
+name = "Method Not Allowed"
+group = "4xx Client"
+summary = "HTTP method not supported here"
+
+[[entry]]
+code = "406"
+name = "Not Acceptable"
+group = "4xx Client"
+summary = "Cannot satisfy Accept headers"
+
+[[entry]]
+code = "407"
+name = "Proxy Authentication Required"
+group = "4xx Client"
+summary = "Auth needed for the proxy"
+
+[[entry]]
+code = "408"
+name = "Request Timeout"
+group = "4xx Client"
+summary = "Client took too long to send"
+
+[[entry]]
+code = "409"
+name = "Conflict"
+group = "4xx Client"
+summary = "Request conflicts with current state"
+
+[[entry]]
+code = "410"
+name = "Gone"
+group = "4xx Client"
+summary = "Resource permanently removed"
+
+[[entry]]
+code = "411"
+name = "Length Required"
+group = "4xx Client"
+summary = "Content-Length header missing"
+
+[[entry]]
+code = "412"
+name = "Precondition Failed"
+group = "4xx Client"
+summary = "A request precondition was false"
+
+[[entry]]
+code = "413"
+name = "Content Too Large"
+group = "4xx Client"
+summary = "Request body exceeds limits"
+
+[[entry]]
+code = "414"
+name = "URI Too Long"
+group = "4xx Client"
+summary = "Request URI exceeds limits"
+
+[[entry]]
+code = "415"
+name = "Unsupported Media Type"
+group = "4xx Client"
+summary = "Body format not supported"
+
+[[entry]]
+code = "416"
+name = "Range Not Satisfiable"
+group = "4xx Client"
+summary = "Requested range invalid"
+
+[[entry]]
+code = "417"
+name = "Expectation Failed"
+group = "4xx Client"
+summary = "Expect header cannot be met"
+
+[[entry]]
+code = "418"
+name = "I'm a teapot"
+group = "4xx Client"
+summary = "Joke code (RFC 2324), not real"
+
+[[entry]]
+code = "421"
+name = "Misdirected Request"
+group = "4xx Client"
+summary = "Wrong server for this request"
+
+[[entry]]
+code = "422"
+name = "Unprocessable Entity"
+group = "4xx Client"
+summary = "Valid syntax, semantic errors"
+detail = "The request is well-formed but fails validation, common in JSON APIs."
+fix = "Fix the field-level validation errors in the body."
+
+[[entry]]
+code = "423"
+name = "Locked"
+group = "4xx Client"
+summary = "Resource is locked (WebDAV)"
+
+[[entry]]
+code = "424"
+name = "Failed Dependency"
+group = "4xx Client"
+summary = "Prior request failed (WebDAV)"
+
+[[entry]]
+code = "425"
+name = "Too Early"
+group = "4xx Client"
+summary = "Replay risk, retry later"
+
+[[entry]]
+code = "426"
+name = "Upgrade Required"
+group = "4xx Client"
+summary = "Client must switch protocols"
+
+[[entry]]
+code = "428"
+name = "Precondition Required"
+group = "4xx Client"
+summary = "Conditional request required"
+
+[[entry]]
+code = "429"
+name = "Too Many Requests"
+group = "4xx Client"
+summary = "Rate limit exceeded"
+detail = "The client sent too many requests in a window."
+fix = "Back off; honor the Retry-After header if present."
+ref = "RFC 6585 4"
+
+[[entry]]
+code = "431"
+name = "Request Header Fields Too Large"
+group = "4xx Client"
+summary = "Headers too large"
+
+[[entry]]
+code = "451"
+name = "Unavailable For Legal Reasons"
+group = "4xx Client"
+summary = "Blocked for legal reasons"
+ref = "RFC 7725"
+
+[[entry]]
+code = "500"
+name = "Internal Server Error"
+group = "5xx Server"
+summary = "Generic server-side fault"
+detail = "An unexpected condition the server cannot be more specific about."
+fix = "Check server logs; the client usually cannot fix this."
+ref = "RFC 9110 15.6.1"
+
+[[entry]]
+code = "501"
+name = "Not Implemented"
+group = "5xx Server"
+summary = "Method not supported by server"
+
+[[entry]]
+code = "502"
+name = "Bad Gateway"
+group = "5xx Server"
+summary = "Invalid response from upstream"
+fix = "Check the upstream/origin service health."
+
+[[entry]]
+code = "503"
+name = "Service Unavailable"
+group = "5xx Server"
+summary = "Server overloaded or down"
+fix = "Retry later; honor Retry-After if present."
+ref = "RFC 9110 15.6.4"
+
+[[entry]]
+code = "504"
+name = "Gateway Timeout"
+group = "5xx Server"
+summary = "Upstream did not respond in time"
+
+[[entry]]
+code = "505"
+name = "HTTP Version Not Supported"
+group = "5xx Server"
+summary = "HTTP version not supported"
+
+[[entry]]
+code = "506"
+name = "Variant Also Negotiates"
+group = "5xx Server"
+summary = "Config error in negotiation"
+
+[[entry]]
+code = "507"
+name = "Insufficient Storage"
+group = "5xx Server"
+summary = "Server out of storage (WebDAV)"
+
+[[entry]]
+code = "508"
+name = "Loop Detected"
+group = "5xx Server"
+summary = "Infinite loop detected (WebDAV)"
+
+[[entry]]
+code = "510"
+name = "Not Extended"
+group = "5xx Server"
+summary = "Further extensions required"
+
+[[entry]]
+code = "511"
+name = "Network Authentication Required"
+group = "5xx Server"
+summary = "Auth needed (captive portal)"
