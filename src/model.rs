@@ -10,8 +10,6 @@ pub enum Category {
 }
 
 impl Category {
-    pub const ALL: [Category; 4] = [Category::Http, Category::Exit, Category::Curl, Category::Git];
-
     pub fn key(self) -> &'static str {
         match self {
             Category::Http => "http",
@@ -99,7 +97,7 @@ mod tests {
     #[test]
     fn all_categories_load() {
         let all = load_all();
-        for cat in Category::ALL {
+        for cat in [Category::Http, Category::Exit, Category::Curl, Category::Git] {
             assert!(all.iter().any(|e| e.category == cat), "no entries for {}", cat.key());
         }
     }
