@@ -3,6 +3,7 @@ use ratatui::style::Color;
 pub const TEXT: Color = Color::Rgb(205, 214, 244);
 pub const OVERLAY: Color = Color::Rgb(127, 132, 156);
 pub const SURFACE: Color = Color::Rgb(69, 71, 90);
+pub const SELECTION: Color = Color::Rgb(49, 50, 68);
 pub const SAPPHIRE: Color = Color::Rgb(116, 199, 236);
 pub const LAVENDER: Color = Color::Rgb(180, 190, 254);
 pub const MAUVE: Color = Color::Rgb(203, 166, 247);

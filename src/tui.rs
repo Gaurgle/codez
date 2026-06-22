@@ -6,7 +6,6 @@ use crossterm::terminal::{
 };
 use crossterm::ExecutableCommand;
 use ratatui::prelude::*;
-use ratatui::style::Modifier;
 use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap};
 
 use crate::app::App;
@@ -136,16 +135,18 @@ fn draw(frame: &mut Frame, app: &App) {
     // List of filtered entries. Column widths size to the visible content
     // (codes range from 3-digit HTTP to long git slugs), capped and ellipsized.
     let hits = app.filtered();
-    // In a single-category view, let the code column grow to fit git slugs.
-    // In the mixed "all" view (HTTP-dominant), keep it tight and ellipsize slugs.
-    let code_cap = if app.filter.is_some() { 18 } else { 8 };
-    let code_w = hits
+    // Column widths are computed over the full dataset, not the filtered view,
+    // so spacing is identical in every category and in "all". Long git slugs
+    // ellipsize in the list; the detail pane shows them in full.
+    let code_w = app
+        .entries
         .iter()
         .map(|e| e.code.chars().count())
         .max()
         .unwrap_or(3)
-        .clamp(3, code_cap);
-    let name_w = hits
+        .clamp(3, 8);
+    let name_w = app
+        .entries
         .iter()
         .map(|e| e.name.chars().count())
         .max()
@@ -177,7 +178,7 @@ fn draw(frame: &mut Frame, app: &App) {
                 .borders(Borders::ALL)
                 .border_style(Style::default().fg(theme::SURFACE)),
         )
-        .highlight_style(Style::default().add_modifier(Modifier::BOLD | Modifier::UNDERLINED))
+        .highlight_style(Style::default().bg(theme::SELECTION))
         .highlight_symbol("▸ ");
     frame.render_stateful_widget(list, chunks[1], &mut state);
 
@@ -239,21 +240,21 @@ mod tests {
     use ratatui::Terminal;
 
     #[test]
-    fn selected_row_is_underlined() {
+    fn selected_row_has_highlight_bg() {
         let app = App::new(load_all());
         let mut terminal = Terminal::new(TestBackend::new(90, 24)).unwrap();
         terminal.draw(|f| draw(f, &app)).unwrap();
-        let underlined = terminal
+        let highlighted = terminal
             .backend()
             .buffer()
             .content()
             .iter()
-            .any(|c| c.modifier.contains(Modifier::UNDERLINED));
-        assert!(underlined, "selected row should be underlined");
+            .any(|c| c.bg == theme::SELECTION);
+        assert!(highlighted, "selected row should have the highlight background");
     }
 
     #[test]
-    fn git_slugs_render_without_clipping_the_code() {
+    fn git_view_shows_name_and_full_slug_in_detail() {
         use crate::model::Category;
         let mut app = App::new(load_all());
         app.filter = Some(Category::Git);
@@ -266,8 +267,8 @@ mod tests {
             .iter()
             .map(|c| c.symbol())
             .collect();
-        assert!(text.contains("nothing-to-commit"));
-        assert!(text.contains("non-fast-forward"));
+        assert!(text.contains("Updates were rejected")); // git name in the list
+        assert!(text.contains("non-fast-forward")); // full slug in the detail pane
     }
 
     #[test]
