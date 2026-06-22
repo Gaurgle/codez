@@ -59,6 +59,9 @@ fn parse(src: &str, category: Category, name: &str) -> Vec<Entry> {
 pub fn load_all() -> Vec<Entry> {
     let mut all = Vec::new();
     all.extend(parse(include_str!("../data/http.toml"), Category::Http, "http.toml"));
+    all.extend(parse(include_str!("../data/exit.toml"), Category::Exit, "exit.toml"));
+    all.extend(parse(include_str!("../data/curl.toml"), Category::Curl, "curl.toml"));
+    all.extend(parse(include_str!("../data/git.toml"), Category::Git, "git.toml"));
     all
 }
 
@@ -86,9 +89,39 @@ mod tests {
     }
 
     #[test]
-    fn every_entry_is_tagged_http() {
+    fn http_subset_is_tagged_and_complete() {
         let all = load_all();
-        assert!(all.iter().all(|e| e.category == Category::Http));
-        assert!(all.len() >= 55);
+        let http: Vec<_> = all.iter().filter(|e| e.category == Category::Http).collect();
+        assert!(http.len() >= 55);
+        assert!(http.iter().all(|e| e.group.contains("xx")));
+    }
+
+    #[test]
+    fn all_categories_load() {
+        let all = load_all();
+        for cat in Category::ALL {
+            assert!(all.iter().any(|e| e.category == cat), "no entries for {}", cat.key());
+        }
+    }
+
+    #[test]
+    fn git_uses_slug_codes() {
+        let all = load_all();
+        let e = all
+            .iter()
+            .find(|e| e.code == "non-fast-forward")
+            .expect("git slug present");
+        assert_eq!(e.category, Category::Git);
+        assert!(e.fix.is_some());
+    }
+
+    #[test]
+    fn exit_127_is_command_not_found() {
+        let all = load_all();
+        let e = all
+            .iter()
+            .find(|e| e.code == "127" && e.category == Category::Exit)
+            .expect("exit 127 present");
+        assert_eq!(e.name, "Command Not Found");
     }
 }

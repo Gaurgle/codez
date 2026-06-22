@@ -1,0 +1,71 @@
+[[entry]]
+code = "non-fast-forward"
+name = "Updates were rejected"
+group = "Push"
+summary = "Remote has commits you do not have"
+detail = "Your push would overwrite remote work because your branch is behind."
+fix = "git pull --rebase, resolve, then push."
+
+[[entry]]
+code = "fetch-first"
+name = "Push rejected, fetch first"
+group = "Push"
+summary = "The remote ref moved since you last fetched"
+fix = "git fetch, reconcile, then push."
+
+[[entry]]
+code = "no-upstream"
+name = "No upstream branch"
+group = "Push"
+summary = "Branch is not tracking a remote"
+fix = "git push -u origin <branch>."
+
+[[entry]]
+code = "detached-head"
+name = "Detached HEAD"
+group = "State"
+summary = "HEAD points at a commit, not a branch"
+detail = "Commits made now are not on any branch and can be lost."
+fix = "git switch -c <branch> to keep your work."
+
+[[entry]]
+code = "not-a-repo"
+name = "Not a git repository"
+group = "State"
+summary = "The current directory is not inside a repo"
+fix = "git init here, or cd into a repository."
+
+[[entry]]
+code = "merge-conflict"
+name = "Merge conflict"
+group = "Merge"
+summary = "Overlapping changes need manual resolution"
+fix = "Edit conflicted files, git add, then commit."
+
+[[entry]]
+code = "dirty-checkout"
+name = "Local changes would be overwritten"
+group = "Checkout"
+summary = "Switching would clobber uncommitted work"
+fix = "Commit, stash, or discard changes first."
+
+[[entry]]
+code = "nothing-to-commit"
+name = "Nothing to commit"
+group = "Commit"
+summary = "No staged changes to record"
+fix = "git add the files you want to commit."
+
+[[entry]]
+code = "remote-exists"
+name = "Remote already exists"
+group = "Remote"
+summary = "Tried to add a remote name already in use"
+fix = "git remote set-url, or pick a new name."
+
+[[entry]]
+code = "auth-failed"
+name = "Authentication failed"
+group = "Remote"
+summary = "Credentials were rejected"
+fix = "Check your token/SSH key and the remote URL."

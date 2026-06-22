@@ -1,0 +1,88 @@
+[[entry]]
+code = "1"
+name = "Unsupported Protocol"
+group = "Protocol"
+summary = "Protocol not supported or disabled"
+
+[[entry]]
+code = "3"
+name = "Malformed URL"
+group = "Protocol"
+summary = "URL was not formatted correctly"
+fix = "Check the URL syntax and escaping."
+
+[[entry]]
+code = "6"
+name = "Could Not Resolve Host"
+group = "Network"
+summary = "DNS lookup failed"
+fix = "Check the hostname and your DNS/resolver."
+
+[[entry]]
+code = "7"
+name = "Failed to Connect"
+group = "Network"
+summary = "Connection refused or unreachable"
+fix = "Check host/port and that the server is up."
+
+[[entry]]
+code = "22"
+name = "HTTP Error Returned"
+group = "Protocol"
+summary = "Server returned >= 400 (with -f/--fail)"
+
+[[entry]]
+code = "23"
+name = "Write Error"
+group = "Transfer"
+summary = "curl could not write output"
+
+[[entry]]
+code = "26"
+name = "Read Error"
+group = "Transfer"
+summary = "curl could not read the input file"
+
+[[entry]]
+code = "28"
+name = "Operation Timed Out"
+group = "Network"
+summary = "Request exceeded the timeout"
+fix = "Raise --max-time, or check the network."
+
+[[entry]]
+code = "35"
+name = "SSL Connect Error"
+group = "TLS"
+summary = "TLS handshake failed"
+
+[[entry]]
+code = "47"
+name = "Too Many Redirects"
+group = "Network"
+summary = "Exceeded --max-redirs"
+
+[[entry]]
+code = "52"
+name = "Empty Reply"
+group = "Network"
+summary = "Server closed without responding"
+
+[[entry]]
+code = "56"
+name = "Failure Receiving Data"
+group = "Transfer"
+summary = "Network error during transfer"
+
+[[entry]]
+code = "60"
+name = "SSL Certificate Problem"
+group = "TLS"
+summary = "Certificate could not be verified"
+fix = "Check the cert chain, or use --cacert."
+
+[[entry]]
+code = "67"
+name = "Login Denied"
+group = "Protocol"
+summary = "Authentication failed"
