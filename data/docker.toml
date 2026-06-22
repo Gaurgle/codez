@@ -1,0 +1,72 @@
+# Docker/container exit codes (docker ps shows these for stopped containers).
+
+[[entry]]
+code = "0"
+name = "Success"
+group = "Exit"
+summary = "Container exited cleanly"
+
+[[entry]]
+code = "1"
+name = "Application Error"
+group = "Exit"
+summary = "Container command exited with a general error"
+
+[[entry]]
+code = "125"
+name = "Docker Daemon Error"
+group = "Exit"
+summary = "The docker run command itself failed"
+detail = "The container did not start; the error is in the docker invocation."
+fix = "Check the run flags, image name, and daemon logs."
+
+[[entry]]
+code = "126"
+name = "Command Not Executable"
+group = "Exit"
+summary = "Container command could not be invoked"
+fix = "Ensure the entrypoint is executable (chmod +x) and is a valid binary."
+
+[[entry]]
+code = "127"
+name = "Command Not Found"
+group = "Exit"
+summary = "Container command is not in PATH"
+fix = "Check the command path inside the image."
+
+[[entry]]
+code = "128"
+name = "Invalid Exit Argument"
+group = "Exit"
+summary = "exit called with an out-of-range value"
+
+[[entry]]
+code = "134"
+name = "Aborted (SIGABRT)"
+group = "Signal"
+summary = "Container aborted, 128+6"
+
+[[entry]]
+code = "137"
+name = "Killed (SIGKILL)"
+group = "Signal"
+summary = "Container killed, 128+9, often the OOM killer"
+fix = "Raise the memory limit, or check for an OOM kill."
+
+[[entry]]
+code = "139"
+name = "Segmentation Fault (SIGSEGV)"
+group = "Signal"
+summary = "Container crashed, 128+11"
+
+[[entry]]
+code = "143"
+name = "Terminated (SIGTERM)"
+group = "Signal"
+summary = "Container stopped gracefully, 128+15"
+
+[[entry]]
+code = "255"
+name = "Exit Status Out of Range"
+group = "Exit"
+summary = "Entrypoint returned a code outside 0-255"

@@ -1,6 +1,6 @@
 # codez
 
-Interactive terminal dictionary of status and error codes - HTTP, shell exit, curl, git - with live search and a detail pane. A sibling to [clockz](https://github.com/Gaurgle/clockz), [noiz](https://github.com/Gaurgle/noiz), and [httpz](https://github.com/Gaurgle/httpz).
+Interactive terminal dictionary of status and error codes - HTTP, shell exit, curl, git, errno (C/Zephyr), BLE (HCI/ATT), Rust, Docker, Podman - with live search and a detail pane. A sibling to [clockz](https://github.com/Gaurgle/clockz), [noiz](https://github.com/Gaurgle/noiz), and [httpz](https://github.com/Gaurgle/httpz).
 
 ## What it does
 
@@ -19,11 +19,14 @@ Each entry carries a summary, a longer explanation, an optional fix hint, and a 
 
 | Key | Action |
 |-----|--------|
-| type | filter live |
+| type | filter live (a category name like `git` filters to it) |
 | `↑` / `↓` | move selection |
-| `Tab` / `Shift-Tab` | cycle category (all/http/exit/curl/git) |
+| `←` / `→`, `Tab` | switch category |
+| `⌥1`-`⌥9`, `⌥0` | jump to a category (`⌥0` = all) |
 | `Esc` | clear search, or quit when empty |
 | `Ctrl-C` | quit |
+
+In `all` mode each row is tagged with its category. `⌥`+number needs your terminal to send Option as Meta/Alt.
 
 ## Build
 

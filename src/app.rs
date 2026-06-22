@@ -65,6 +65,11 @@ impl App {
             Some(Category::Exit),
             Some(Category::Curl),
             Some(Category::Git),
+            Some(Category::Errno),
+            Some(Category::Ble),
+            Some(Category::Rust),
+            Some(Category::Docker),
+            Some(Category::Podman),
         ];
         let idx = order.iter().position(|c| *c == self.filter).unwrap_or(0);
         let n = order.len() as isize;
@@ -152,6 +157,11 @@ mod tests {
             Some(Category::Exit),
             Some(Category::Curl),
             Some(Category::Git),
+            Some(Category::Errno),
+            Some(Category::Ble),
+            Some(Category::Rust),
+            Some(Category::Docker),
+            Some(Category::Podman),
             None,
         ];
         for expected in seq {

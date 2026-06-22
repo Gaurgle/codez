@@ -1,0 +1,132 @@
+# Common rustc error codes (rustc --explain EXXXX).
+
+[[entry]]
+code = "E0382"
+name = "Use of moved value"
+group = "Ownership"
+summary = "Value used after it was moved"
+detail = "A value was moved into another binding/call, then used again."
+fix = "Clone it, borrow it, or restructure so ownership is not moved."
+
+[[entry]]
+code = "E0499"
+name = "Double mutable borrow"
+group = "Borrowing"
+summary = "Cannot borrow as mutable more than once"
+fix = "Limit each &mut borrow's scope; only one may be live at a time."
+
+[[entry]]
+code = "E0502"
+name = "Mutable and immutable borrow"
+group = "Borrowing"
+summary = "Cannot borrow mutably while also borrowed immutably"
+fix = "End the immutable borrow before taking the mutable one."
+
+[[entry]]
+code = "E0506"
+name = "Assign to borrowed value"
+group = "Borrowing"
+summary = "Cannot assign to a value that is borrowed"
+
+[[entry]]
+code = "E0507"
+name = "Move out of borrow"
+group = "Borrowing"
+summary = "Cannot move out of borrowed content"
+fix = "Clone, or take by value (e.g. std::mem::take/replace)."
+
+[[entry]]
+code = "E0596"
+name = "Borrow as mutable, not declared mut"
+group = "Borrowing"
+summary = "Cannot borrow as mutable; binding is not mut"
+fix = "Declare the binding with `mut`."
+
+[[entry]]
+code = "E0277"
+name = "Trait bound not satisfied"
+group = "Traits"
+summary = "A required trait is not implemented"
+fix = "Implement the trait, or add the bound where the type is used."
+
+[[entry]]
+code = "E0599"
+name = "Method not found"
+group = "Traits"
+summary = "No method/associated item with that name"
+fix = "Import the defining trait, or check the receiver type."
+
+[[entry]]
+code = "E0369"
+name = "Binary op not supported"
+group = "Traits"
+summary = "Operator not implemented for these types"
+
+[[entry]]
+code = "E0308"
+name = "Mismatched types"
+group = "Types"
+summary = "Expected one type, found another"
+
+[[entry]]
+code = "E0061"
+name = "Wrong number of arguments"
+group = "Types"
+summary = "Function called with the wrong arg count"
+
+[[entry]]
+code = "E0004"
+name = "Non-exhaustive match"
+group = "Types"
+summary = "match does not cover all variants"
+fix = "Add the missing arms, or a `_` catch-all."
+
+[[entry]]
+code = "E0072"
+name = "Recursive type, infinite size"
+group = "Types"
+summary = "A type recurses without indirection"
+fix = "Box the recursive field (e.g. Box<Self>)."
+
+[[entry]]
+code = "E0425"
+name = "Cannot find value in scope"
+group = "Names"
+summary = "Unresolved name"
+
+[[entry]]
+code = "E0412"
+name = "Cannot find type"
+group = "Names"
+summary = "Unresolved type name"
+
+[[entry]]
+code = "E0432"
+name = "Unresolved import"
+group = "Names"
+summary = "use path does not resolve"
+
+[[entry]]
+code = "E0433"
+name = "Use of undeclared item"
+group = "Names"
+summary = "Failed to resolve a path/crate"
+
+[[entry]]
+code = "E0106"
+name = "Missing lifetime specifier"
+group = "Lifetimes"
+summary = "A reference needs an explicit lifetime"
+
+[[entry]]
+code = "E0515"
+name = "Return reference to local"
+group = "Lifetimes"
+summary = "Cannot return a reference to local data"
+fix = "Return an owned value, or borrow from an input."
+
+[[entry]]
+code = "E0521"
+name = "Borrowed data escapes"
+group = "Lifetimes"
+summary = "A borrow outlives the data it points to"

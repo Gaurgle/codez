@@ -1,0 +1,152 @@
+# POSIX/Linux errno values (also used by Zephyr/newlib).
+# Note: a few numbers differ on macOS/BSD; see per-entry notes.
+
+[[entry]]
+code = "1"
+name = "EPERM"
+group = "Permission"
+summary = "Operation not permitted"
+
+[[entry]]
+code = "2"
+name = "ENOENT"
+group = "Filesystem"
+summary = "No such file or directory"
+
+[[entry]]
+code = "3"
+name = "ESRCH"
+group = "Process"
+summary = "No such process"
+
+[[entry]]
+code = "4"
+name = "EINTR"
+group = "I/O"
+summary = "Interrupted system call"
+
+[[entry]]
+code = "5"
+name = "EIO"
+group = "I/O"
+summary = "Input/output error"
+
+[[entry]]
+code = "9"
+name = "EBADF"
+group = "I/O"
+summary = "Bad file descriptor"
+
+[[entry]]
+code = "11"
+name = "EAGAIN"
+group = "Resource"
+summary = "Resource temporarily unavailable (try again)"
+detail = "Also EWOULDBLOCK. On macOS/BSD this is 35, not 11."
+
+[[entry]]
+code = "12"
+name = "ENOMEM"
+group = "Resource"
+summary = "Out of memory"
+
+[[entry]]
+code = "13"
+name = "EACCES"
+group = "Permission"
+summary = "Permission denied"
+fix = "Check file mode/owner and process privileges."
+
+[[entry]]
+code = "14"
+name = "EFAULT"
+group = "Process"
+summary = "Bad address"
+
+[[entry]]
+code = "16"
+name = "EBUSY"
+group = "Resource"
+summary = "Device or resource busy"
+
+[[entry]]
+code = "17"
+name = "EEXIST"
+group = "Filesystem"
+summary = "File exists"
+
+[[entry]]
+code = "19"
+name = "ENODEV"
+group = "Filesystem"
+summary = "No such device"
+
+[[entry]]
+code = "20"
+name = "ENOTDIR"
+group = "Filesystem"
+summary = "Not a directory"
+
+[[entry]]
+code = "21"
+name = "EISDIR"
+group = "Filesystem"
+summary = "Is a directory"
+
+[[entry]]
+code = "22"
+name = "EINVAL"
+group = "Process"
+summary = "Invalid argument"
+
+[[entry]]
+code = "24"
+name = "EMFILE"
+group = "Resource"
+summary = "Too many open files"
+fix = "Raise the fd limit (ulimit -n) or close descriptors."
+
+[[entry]]
+code = "28"
+name = "ENOSPC"
+group = "Filesystem"
+summary = "No space left on device"
+
+[[entry]]
+code = "32"
+name = "EPIPE"
+group = "I/O"
+summary = "Broken pipe"
+
+[[entry]]
+code = "36"
+name = "ENAMETOOLONG"
+group = "Filesystem"
+summary = "File name too long"
+
+[[entry]]
+code = "104"
+name = "ECONNRESET"
+group = "Network"
+summary = "Connection reset by peer"
+detail = "macOS/BSD numbers differ (54)."
+
+[[entry]]
+code = "110"
+name = "ETIMEDOUT"
+group = "Network"
+summary = "Connection timed out"
+detail = "macOS/BSD numbers differ (60)."
+
+[[entry]]
+code = "111"
+name = "ECONNREFUSED"
+group = "Network"
+summary = "Connection refused"
+detail = "macOS/BSD numbers differ (61)."
+
+[[entry]]
+code = "113"
+name = "EHOSTUNREACH"
+group = "Network"
+summary = "No route to host"

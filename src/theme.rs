@@ -24,6 +24,22 @@ pub fn ansi(c: Color) -> String {
     }
 }
 
+/// Distinct accent color per category, for the row tag.
+pub fn category_color(key: &str) -> Color {
+    match key {
+        "http" => SAPPHIRE,
+        "exit" => PEACH,
+        "curl" => GREEN,
+        "git" => MAUVE,
+        "errno" => YELLOW,
+        "ble" => BLUE,
+        "rust" => RED,
+        "docker" => LAVENDER,
+        "podman" => MAUVE,
+        _ => OVERLAY,
+    }
+}
+
 /// Color for a group header, by its leading band/word.
 pub fn group_color(group: &str) -> Color {
     if group.starts_with("2xx") || group.starts_with("Success") {

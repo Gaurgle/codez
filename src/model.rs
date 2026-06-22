@@ -7,6 +7,11 @@ pub enum Category {
     Exit,
     Curl,
     Git,
+    Errno,
+    Ble,
+    Rust,
+    Docker,
+    Podman,
 }
 
 impl Category {
@@ -16,6 +21,11 @@ impl Category {
             Category::Exit => "exit",
             Category::Curl => "curl",
             Category::Git => "git",
+            Category::Errno => "errno",
+            Category::Ble => "ble",
+            Category::Rust => "rust",
+            Category::Docker => "docker",
+            Category::Podman => "podman",
         }
     }
 }
@@ -60,6 +70,11 @@ pub fn load_all() -> Vec<Entry> {
     all.extend(parse(include_str!("../data/exit.toml"), Category::Exit, "exit.toml"));
     all.extend(parse(include_str!("../data/curl.toml"), Category::Curl, "curl.toml"));
     all.extend(parse(include_str!("../data/git.toml"), Category::Git, "git.toml"));
+    all.extend(parse(include_str!("../data/errno.toml"), Category::Errno, "errno.toml"));
+    all.extend(parse(include_str!("../data/ble.toml"), Category::Ble, "ble.toml"));
+    all.extend(parse(include_str!("../data/rust.toml"), Category::Rust, "rust.toml"));
+    all.extend(parse(include_str!("../data/docker.toml"), Category::Docker, "docker.toml"));
+    all.extend(parse(include_str!("../data/podman.toml"), Category::Podman, "podman.toml"));
     all
 }
 
@@ -97,9 +112,37 @@ mod tests {
     #[test]
     fn all_categories_load() {
         let all = load_all();
-        for cat in [Category::Http, Category::Exit, Category::Curl, Category::Git] {
+        for cat in [
+            Category::Http,
+            Category::Exit,
+            Category::Curl,
+            Category::Git,
+            Category::Errno,
+            Category::Ble,
+            Category::Rust,
+            Category::Docker,
+            Category::Podman,
+        ] {
             assert!(all.iter().any(|e| e.category == cat), "no entries for {}", cat.key());
         }
+    }
+
+    #[test]
+    fn new_domains_resolve_known_codes() {
+        let all = load_all();
+        assert!(all
+            .iter()
+            .any(|e| e.code == "E0382" && e.category == Category::Rust));
+        assert!(all
+            .iter()
+            .any(|e| e.code == "13" && e.category == Category::Errno && e.name == "EACCES"));
+        assert!(all
+            .iter()
+            .any(|e| e.code == "137" && e.category == Category::Docker));
+        assert!(all.iter().any(|e| e.category == Category::Ble));
+        assert!(all
+            .iter()
+            .any(|e| e.code == "125" && e.category == Category::Podman));
     }
 
     #[test]

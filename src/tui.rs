@@ -44,6 +44,11 @@ fn event_loop(terminal: &mut Terminal<CrosstermBackend<Stdout>>, app: &mut App) 
             (KeyCode::Char('2'), KeyModifiers::ALT) => app.set_category(Some(Category::Exit)),
             (KeyCode::Char('3'), KeyModifiers::ALT) => app.set_category(Some(Category::Curl)),
             (KeyCode::Char('4'), KeyModifiers::ALT) => app.set_category(Some(Category::Git)),
+            (KeyCode::Char('5'), KeyModifiers::ALT) => app.set_category(Some(Category::Errno)),
+            (KeyCode::Char('6'), KeyModifiers::ALT) => app.set_category(Some(Category::Ble)),
+            (KeyCode::Char('7'), KeyModifiers::ALT) => app.set_category(Some(Category::Rust)),
+            (KeyCode::Char('8'), KeyModifiers::ALT) => app.set_category(Some(Category::Docker)),
+            (KeyCode::Char('9'), KeyModifiers::ALT) => app.set_category(Some(Category::Podman)),
             (KeyCode::Char('0'), KeyModifiers::ALT) => app.set_category(None),
             (KeyCode::Esc, _) => {
                 if app.query.is_empty() {
@@ -93,6 +98,11 @@ fn category_tag_spans(app: &App) -> Vec<Span<'static>> {
         (Some(Category::Exit), "exit"),
         (Some(Category::Curl), "curl"),
         (Some(Category::Git), "git"),
+        (Some(Category::Errno), "errno"),
+        (Some(Category::Ble), "ble"),
+        (Some(Category::Rust), "rust"),
+        (Some(Category::Docker), "docker"),
+        (Some(Category::Podman), "podman"),
     ];
     tags.iter()
         .map(|(cat, name)| {
@@ -136,26 +146,33 @@ fn draw(frame: &mut Frame, app: &App) {
     // (codes range from 3-digit HTTP to long git slugs), capped and ellipsized.
     let hits = app.filtered();
     // Column widths are computed over the full dataset, not the filtered view,
-    // so spacing is identical in every category and in "all". Long git slugs
-    // ellipsize in the list; the detail pane shows them in full.
+    // so spacing is identical in every category and in "all". A leading category
+    // tag shows where each row belongs (essential in "all"). git slugs ellipsize
+    // in the list; the detail pane always shows the code in full.
     let code_w = app
         .entries
         .iter()
         .map(|e| e.code.chars().count())
         .max()
         .unwrap_or(3)
-        .clamp(3, 8);
+        .clamp(3, 12);
     let name_w = app
         .entries
         .iter()
         .map(|e| e.name.chars().count())
         .max()
         .unwrap_or(8)
-        .clamp(8, 28);
+        .clamp(8, 26);
     let items: Vec<ListItem> = hits
         .iter()
         .map(|e| {
+            let key = e.category.key();
             ListItem::new(Line::from(vec![
+                Span::styled(
+                    format!("{key:<6}"),
+                    Style::default().fg(theme::category_color(key)),
+                ),
+                Span::raw(" "),
                 Span::styled(
                     fit(&e.code, code_w),
                     Style::default().fg(theme::group_color(&e.group)),
@@ -238,6 +255,22 @@ mod tests {
     use crate::model::load_all;
     use ratatui::backend::TestBackend;
     use ratatui::Terminal;
+
+    #[test]
+    fn all_view_shows_category_tags() {
+        let app = App::new(load_all());
+        let mut terminal = Terminal::new(TestBackend::new(100, 24)).unwrap();
+        terminal.draw(|f| draw(f, &app)).unwrap();
+        let text: String = terminal
+            .backend()
+            .buffer()
+            .content()
+            .iter()
+            .map(|c| c.symbol())
+            .collect();
+        // The list rows in "all" mode carry a category tag.
+        assert!(text.contains("http"));
+    }
 
     #[test]
     fn selected_row_has_highlight_bg() {

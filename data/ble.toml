@@ -1,0 +1,142 @@
+# Bluetooth LE error codes: HCI controller errors and ATT protocol errors.
+
+[[entry]]
+code = "0x01"
+name = "Unknown HCI Command"
+group = "HCI"
+summary = "Controller does not recognise the command"
+
+[[entry]]
+code = "0x02"
+name = "Unknown Connection Identifier"
+group = "HCI"
+summary = "No connection for the given handle"
+
+[[entry]]
+code = "0x05"
+name = "Authentication Failure"
+group = "HCI"
+summary = "Pairing or authentication failed"
+
+[[entry]]
+code = "0x06"
+name = "PIN or Key Missing"
+group = "HCI"
+summary = "No stored key for the peer"
+fix = "Re-pair the devices, or clear stale bonds."
+
+[[entry]]
+code = "0x07"
+name = "Memory Capacity Exceeded"
+group = "HCI"
+summary = "Controller is out of memory"
+
+[[entry]]
+code = "0x08"
+name = "Connection Timeout"
+group = "HCI"
+summary = "Link supervision timeout expired"
+
+[[entry]]
+code = "0x0C"
+name = "Command Disallowed"
+group = "HCI"
+summary = "Command not allowed in the current state"
+
+[[entry]]
+code = "0x12"
+name = "Invalid HCI Command Parameters"
+group = "HCI"
+summary = "A command parameter was out of range"
+
+[[entry]]
+code = "0x13"
+name = "Remote User Terminated Connection"
+group = "HCI"
+summary = "Peer closed the connection"
+
+[[entry]]
+code = "0x16"
+name = "Connection Terminated by Local Host"
+group = "HCI"
+summary = "Local host closed the connection"
+
+[[entry]]
+code = "0x1F"
+name = "Unspecified Error"
+group = "HCI"
+summary = "Error with no more specific code"
+
+[[entry]]
+code = "0x22"
+name = "LL Response Timeout"
+group = "HCI"
+summary = "Link layer / LMP response timed out"
+
+[[entry]]
+code = "0x3B"
+name = "Unacceptable Connection Parameters"
+group = "HCI"
+summary = "Requested connection parameters rejected"
+
+[[entry]]
+code = "0x3E"
+name = "Connection Failed to be Established"
+group = "HCI"
+summary = "Connection setup did not complete"
+
+[[entry]]
+code = "0x01 (ATT)"
+name = "Invalid Handle"
+group = "ATT"
+summary = "The attribute handle is invalid"
+
+[[entry]]
+code = "0x02 (ATT)"
+name = "Read Not Permitted"
+group = "ATT"
+summary = "Attribute cannot be read"
+
+[[entry]]
+code = "0x03 (ATT)"
+name = "Write Not Permitted"
+group = "ATT"
+summary = "Attribute cannot be written"
+
+[[entry]]
+code = "0x05 (ATT)"
+name = "Insufficient Authentication"
+group = "ATT"
+summary = "Link must be authenticated first"
+fix = "Pair/authenticate before accessing this attribute."
+
+[[entry]]
+code = "0x06 (ATT)"
+name = "Request Not Supported"
+group = "ATT"
+summary = "Server does not support the request"
+
+[[entry]]
+code = "0x0A (ATT)"
+name = "Attribute Not Found"
+group = "ATT"
+summary = "No attribute in the given handle range"
+
+[[entry]]
+code = "0x0D (ATT)"
+name = "Invalid Attribute Value Length"
+group = "ATT"
+summary = "Value length is not allowed"
+
+[[entry]]
+code = "0x0F (ATT)"
+name = "Insufficient Encryption"
+group = "ATT"
+summary = "Link must be encrypted first"
+fix = "Enable encryption (bond) before access."
+
+[[entry]]
+code = "0x11 (ATT)"
+name = "Insufficient Resources"
+group = "ATT"
+summary = "Server is out of resources"
